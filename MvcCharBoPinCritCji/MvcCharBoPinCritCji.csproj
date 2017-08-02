@@ -234,6 +234,7 @@
     <Content Include="Views\CharBopoPinCrits\Edit.cshtml" />
     <Content Include="Views\CharBopoPinCrits\Index.cshtml" />
     <Content Include="Views\CharBopoPinCrits\Subset.cshtml" />
+    <Content Include="Views\CharBopoPinCrits\Onechar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

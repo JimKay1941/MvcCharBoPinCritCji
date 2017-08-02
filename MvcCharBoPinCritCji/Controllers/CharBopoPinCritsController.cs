@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using MvcCharBoPinCritCji.Models;
 
 namespace MvcCharBoPinCritCji.Controllers
@@ -13,6 +14,31 @@ namespace MvcCharBoPinCritCji.Controllers
     public class CharBopoPinCritsController : Controller
     {
         private ChineseStudyEntities db = new ChineseStudyEntities();
+
+        //GET: CharBopoPinCrits/Onechar
+        public ActionResult Onechar()
+        {
+            return View();
+        }
+
+        // POST: CharBopoPinCrits/Onechar
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+
+        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Onechar")]
+        public ActionResult Subset([Bind(Include = "ID,Char,Bopo,Pin,Crit,Cji")] CharBopoPinCrit charBopoPinCrit)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Onechar");
+            }
+
+            return RedirectToAction("Subset", new { Char = charBopoPinCrit.Char});
+
+            //return RedirectToAction("Subset", new RouteValueDictionary(
+            //    new { controller = charBopoPinCrit, action = "Subset", Char = charBopoPinCrit.Char }));
+        }
 
         // GET: CharBopoPinCrits/Subset/Char
         public ActionResult Subset(string Char)
@@ -22,8 +48,10 @@ namespace MvcCharBoPinCritCji.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            //var subset = db.CharBopoPinCrits.Find(Char);
-            return View(db.CharBopoPinCrits.ToList());
+            var model =
+                (this.db.CharBopoPinCrits.Where(p => p.Char == Char)
+                );
+            return View(model);
         }
 
         // GET: CharBopoPinCrits
@@ -64,10 +92,10 @@ namespace MvcCharBoPinCritCji.Controllers
             {
                 db.CharBopoPinCrits.Add(charBopoPinCrit);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return View(charBopoPinCrit);
             }
 
-            return View(charBopoPinCrit);
+            return RedirectToAction("Subset", new { Char = charBopoPinCrit.Char });
         }
 
         // GET: CharBopoPinCrits/Edit/5
@@ -124,7 +152,8 @@ namespace MvcCharBoPinCritCji.Controllers
             CharBopoPinCrit charBopoPinCrit = db.CharBopoPinCrits.Find(id);
             db.CharBopoPinCrits.Remove(charBopoPinCrit);
             db.SaveChanges();
-            return RedirectToAction("Index");
+
+            return View(charBopoPinCrit);
         }
 
         protected override void Dispose(bool disposing)
